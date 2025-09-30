@@ -1,0 +1,165 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ include file="/jsp/header.jsp" %>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>로그인 - 부동산 거래 플랫폼</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="${root}/css/styles.css" />
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="${root}/jsp/index.jsp">
+        <i class="fas fa-home me-2"></i>부동산 플랫폼
+      </a>
+    </div>
+  </nav>
+  <div class="container-fluid">
+    <div class="row">
+      <aside class="sidebar">
+        <div class="p-3">
+          <h5 class="text-gradient mb-3">메뉴</h5>
+          <ul class="nav flex-column">
+            <li class="nav-item">
+              <a href="${root}/jsp/index.jsp" class="nav-link"> <i class="fas fa-home me-2"></i>메인 </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+      <main class="main-content">
+        <div class="row justify-content-center">
+          <div class="col-md-6 col-lg-4">
+            <div class="card shadow-custom">
+              <div class="card-header text-center">
+                <h4 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>로그인</h4>
+                <p class="mb-0 mt-2 opacity-75">부동산 플랫폼에 오신 것을 환영합니다</p>
+              </div>
+              <div class="card-body p-4">
+                <form id="loginForm">
+                  <div class="mb-3">
+                    <label for="username" class="form-label">
+                      <i class="fas fa-user me-2"></i>아이디
+                    </label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="아이디를 입력하세요" required />
+                  </div>
+                  <div class="mb-3">
+                    <label for="password" class="form-label">
+                      <i class="fas fa-lock me-2"></i>비밀번호
+                    </label>
+                    <div class="input-group">
+                      <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호를 입력하세요" required />
+                      <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe" />
+                    <label class="form-check-label" for="rememberMe"> 로그인 상태 유지 </label>
+                  </div>
+                  <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                      <i class="fas fa-sign-in-alt me-2"></i>로그인
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
+        <main class="main-content">
+          <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-4">
+              <div class="card shadow-custom">
+                <div class="card-header text-center">
+                  <h4 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>로그인</h4>
+                  <p class="mb-0 mt-2 opacity-75">부동산 플랫폼에 오신 것을 환영합니다</p>
+                </div>
+                <div class="card-body p-4">
+                  <form id="loginForm">
+                    <div class="mb-3">
+                      <label for="username" class="form-label"> <i class="fas fa-user me-2"></i>아이디 </label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="username"
+                        name="username"
+                        placeholder="아이디를 입력하세요"
+                        required
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="password" class="form-label"> <i class="fas fa-lock me-2"></i>비밀번호 </label>
+                      <div class="input-group">
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="password"
+                          name="password"
+                          placeholder="비밀번호를 입력하세요"
+                          required
+                        />
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="mb-3 form-check">
+                      <input type="checkbox" class="form-check-input" id="rememberMe" />
+                      <label class="form-check-label" for="rememberMe"> 로그인 상태 유지 </label>
+                    </div>
+                    <div class="d-grid gap-2">
+                      <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i>로그인
+                      </button>
+                    </div>
+                  </form>
+                  <hr class="my-4" />
+                  <div class="text-center">
+                    <p class="mb-2">계정이 없으신가요?</p>
+                    <a href="${root}/jsp/member_register.jsp" class="btn btn-outline-primary">
+                      <i class="fas fa-user-plus me-2"></i>회원가입
+                    </a>
+                  </div>
+                  <div class="text-center mt-3">
+                    <a href="#" class="text-muted text-decoration-none">
+                      <i class="fas fa-question-circle me-1"></i>아이디/비밀번호 찾기
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <!-- 소셜 로그인 -->
+              <div class="card mt-3 shadow-custom">
+                <div class="card-body p-3">
+                  <h6 class="text-center mb-3">소셜 계정으로 로그인</h6>
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-outline-dark"><i class="fab fa-google me-2"></i>Google로 로그인</button>
+                    <button class="btn btn-outline-primary">
+                      <i class="fab fa-facebook me-2"></i>Facebook으로 로그인
+                    </button>
+                    <button class="btn btn-outline-success"><i class="fab fa-kakao me-2"></i>카카오로 로그인</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="${root}/js/auth.js"></script>
+  </body>
+</html>
+<%-- ...기존 login.html의 내용... --%>
+<!-- ...existing code... -->

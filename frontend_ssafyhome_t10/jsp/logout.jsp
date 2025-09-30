@@ -1,0 +1,19 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>로그아웃 - RealEstate</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script defer src="${root}/js/main.js"></script>
+    <script defer src="${root}/js/auth.js"></script>
+  </head>
+  <body>
+    <script>
+      // 즉시 로그아웃 처리
+      localStorage.removeItem("sessionUser");
+      location.replace("${root}/jsp/index.jsp");
+    </script>
+  </body>
+</html>

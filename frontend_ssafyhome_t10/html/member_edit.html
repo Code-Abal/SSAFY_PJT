@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>회원정보 수정</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .required-field::after {
+        content: " *";
+        color: red;
+      }
+      .search-section {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="../index.html">
+          <i class="bi bi-house-fill me-2"></i>부동산 관리 시스템
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="member_list.html">
+                <i class="bi bi-arrow-left me-1"></i>회원관리
+              </a>
+            </li>
+            <li class="nav-item" id="logoutNavItem" style="display: none">
+              <a class="nav-link" href="#" onclick="logout()">
+                <i class="bi bi-box-arrow-right me-1"></i>로그아웃
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container py-5">
+      <div class="form-container">
+        <!-- 페이지 헤더 -->
+        <div class="text-center mb-4">
+          <h2 class="text-warning">
+            <i class="bi bi-pencil-square me-2"></i>회원정보 수정
+          </h2>
+          <p class="text-muted">기존 회원 정보를 수정합니다</p>
+        </div>
+
+        <!-- 회원 검색 섹션 -->
+        <div class="search-section">
+          <h5 class="mb-3">
+            <i class="bi bi-search me-2"></i>수정할 회원 검색
+          </h5>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="searchType" class="form-label">검색 조건</label>
+              <select class="form-select" id="searchType">
+                <option value="username">아이디</option>
+                <option value="name">이름</option>
+                <option value="email">이메일</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="searchKeyword" class="form-label">검색어</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="searchKeyword" placeholder="검색어를 입력하세요">
+                <button class="btn btn-primary" type="button" onclick="searchMember()">
+                  <i class="bi bi-search me-1"></i>검색
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 수정 폼 (처음에는 숨김) -->
+        <div id="editFormSection" style="display: none;">
+          <div class="card shadow">
+            <div class="card-header bg-warning text-white">
+              <h5 class="mb-0">
+                <i class="bi bi-person me-2"></i>회원 정보 수정
+              </h5>
+            </div>
+            <div class="card-body p-4">
+              <form id="memberEditForm">
+                <input type="hidden" id="editMemberId" name="memberId">
+                
+                <!-- 기본 정보 -->
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="editUsername" class="form-label required-field">아이디</label>
+                    <input type="text" class="form-control" id="editUsername" name="username" readonly>
+                    <div class="form-text">아이디는 수정할 수 없습니다</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editName" class="form-label required-field">이름</label>
+                    <input type="text" class="form-control" id="editName" name="name" required>
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="editEmail" class="form-label required-field">이메일</label>
+                    <input type="email" class="form-control" id="editEmail" name="email" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editPhone" class="form-label">전화번호</label>
+                    <input type="tel" class="form-control" id="editPhone" name="phone" placeholder="010-1234-5678">
+                  </div>
+                </div>
+
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <label for="editRole" class="form-label required-field">역할</label>
+                    <select class="form-select" id="editRole" name="role" required>
+                      <option value="user">일반 사용자</option>
+                      <option value="admin">관리자</option>
+                    </select>
+                  </div>
+                  <div class="col-md-6">
+                    <label for="editStatus" class="form-label required-field">상태</label>
+                    <select class="form-select" id="editStatus" name="status" required>
+                      <option value="active">활성</option>
+                      <option value="inactive">비활성</option>
+                      <option value="suspended">정지</option>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- 추가 정보 -->
+                <div class="mb-3">
+                  <label for="editAddress" class="form-label">주소</label>
+                  <textarea class="form-control" id="editAddress" name="address" rows="2" placeholder="상세 주소를 입력하세요"></textarea>
+                </div>
+
+                <div class="mb-3">
+                  <label for="editNotes" class="form-label">메모</label>
+                  <textarea class="form-control" id="editNotes" name="notes" rows="3" placeholder="회원에 대한 추가 정보나 메모를 입력하세요"></textarea>
+                </div>
+
+                <!-- 비밀번호 변경 섹션 -->
+                <div class="mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="changePassword">
+                    <label class="form-check-label" for="changePassword">
+                      비밀번호 변경
+                    </label>
+                  </div>
+                </div>
+
+                <div id="passwordChangeSection" style="display: none;">
+                  <div class="row mb-3">
+                    <div class="col-md-6">
+                      <label for="editPassword" class="form-label">새 비밀번호</label>
+                      <input type="password" class="form-control" id="editPassword" name="password">
+                      <div class="form-text">8자 이상, 영문/숫자/특수문자 조합</div>
+                    </div>
+                    <div class="col-md-6">
+                      <label for="editConfirmPassword" class="form-label">새 비밀번호 확인</label>
+                      <input type="password" class="form-control" id="editConfirmPassword" name="confirmPassword">
+                      <div class="form-text" id="editPasswordMatchHelp"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 버튼 그룹 -->
+                <div class="d-flex justify-content-between">
+                  <button type="button" class="btn btn-secondary" onclick="goBack()">
+                    <i class="bi bi-arrow-left me-1"></i>뒤로가기
+                  </button>
+                  <div>
+                    <button type="button" class="btn btn-outline-warning me-2" onclick="resetEditForm()">
+                      <i class="bi bi-arrow-clockwise me-1"></i>원래대로
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                      <i class="bi bi-check-circle me-1"></i>수정하기
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- 검색 결과가 없을 때 메시지 -->
+        <div id="noResultMessage" class="text-center text-muted" style="display: none;">
+          <i class="bi bi-search" style="font-size: 3rem;"></i>
+          <h5 class="mt-3">검색 결과가 없습니다</h5>
+          <p>다른 검색 조건으로 다시 시도해보세요.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 회원관리 JavaScript -->
+    <script src="../js/member_management.js"></script>
+  </body>
+</html>

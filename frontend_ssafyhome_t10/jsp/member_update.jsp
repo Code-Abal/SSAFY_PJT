@@ -1,0 +1,33 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%> <%@ include
+file="/jsp/header.jsp" %>
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>회원 수정</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  </head>
+  <body class="container py-5">
+    <h2 class="mb-4">회원 수정</h2>
+    <form>
+      <div class="mb-3">
+        <label class="form-label">아이디</label>
+        <input type="text" class="form-control" value="hong123" disabled />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">비밀번호 변경</label>
+        <input type="password" class="form-control" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">이름</label>
+        <input type="text" class="form-control" value="홍길동" />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">이메일</label>
+        <input type="email" class="form-control" value="hong@test.com" />
+      </div>
+      <button class="btn btn-primary">수정하기</button>
+    </form>
+  </body>
+</html>

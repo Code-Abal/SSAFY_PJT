@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>회원정보 등록</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/style.css" />
+    <style>
+      .form-container {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .required-field::after {
+        content: " *";
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 네비게이션 바 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="../index.html">
+          <i class="bi bi-house-fill me-2"></i>부동산 관리 시스템
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="member_list.html">
+                <i class="bi bi-arrow-left me-1"></i>회원관리
+              </a>
+            </li>
+            <li class="nav-item" id="logoutNavItem" style="display: none">
+              <a class="nav-link" href="#" onclick="logout()">
+                <i class="bi bi-box-arrow-right me-1"></i>로그아웃
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container py-5">
+      <div class="form-container">
+        <!-- 페이지 헤더 -->
+        <div class="text-center mb-4">
+          <h2 class="text-primary">
+            <i class="bi bi-person-plus-fill me-2"></i>회원정보 등록
+          </h2>
+          <p class="text-muted">새로운 회원을 시스템에 등록합니다</p>
+        </div>
+
+        <!-- 등록 폼 -->
+        <div class="card shadow">
+          <div class="card-body p-4">
+            <form id="memberRegistrationForm">
+              <!-- 기본 정보 -->
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="username" class="form-label required-field">아이디</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control" id="username" name="username" required>
+                    <button class="btn btn-outline-secondary" type="button" onclick="checkUsernameAvailability()">
+                      중복확인
+                    </button>
+                  </div>
+                  <div class="form-text" id="usernameHelp"></div>
+                </div>
+                <div class="col-md-6">
+                  <label for="password" class="form-label required-field">비밀번호</label>
+                  <input type="password" class="form-control" id="password" name="password" required>
+                  <div class="form-text">8자 이상, 영문/숫자/특수문자 조합</div>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="confirmPassword" class="form-label required-field">비밀번호 확인</label>
+                  <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                  <div class="form-text" id="passwordMatchHelp"></div>
+                </div>
+                <div class="col-md-6">
+                  <label for="name" class="form-label required-field">이름</label>
+                  <input type="text" class="form-control" id="name" name="name" required>
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="email" class="form-label required-field">이메일</label>
+                  <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="phone" class="form-label">전화번호</label>
+                  <input type="tel" class="form-control" id="phone" name="phone" placeholder="010-1234-5678">
+                </div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <label for="role" class="form-label required-field">역할</label>
+                  <select class="form-select" id="role" name="role" required>
+                    <option value="">역할을 선택하세요</option>
+                    <option value="user">일반 사용자</option>
+                    <option value="admin">관리자</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="status" class="form-label required-field">상태</label>
+                  <select class="form-select" id="status" name="status" required>
+                    <option value="">상태를 선택하세요</option>
+                    <option value="active">활성</option>
+                    <option value="inactive">비활성</option>
+                    <option value="suspended">정지</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- 추가 정보 -->
+              <div class="mb-3">
+                <label for="address" class="form-label">주소</label>
+                <textarea class="form-control" id="address" name="address" rows="2" placeholder="상세 주소를 입력하세요"></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="notes" class="form-label">메모</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="회원에 대한 추가 정보나 메모를 입력하세요"></textarea>
+              </div>
+
+              <!-- 버튼 그룹 -->
+              <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" onclick="goBack()">
+                  <i class="bi bi-arrow-left me-1"></i>뒤로가기
+                </button>
+                <div>
+                  <button type="reset" class="btn btn-outline-secondary me-2">
+                    <i class="bi bi-arrow-clockwise me-1"></i>초기화
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle me-1"></i>등록하기
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 회원관리 JavaScript -->
+    <script src="../js/member_management.js"></script>
+  </body>
+</html>

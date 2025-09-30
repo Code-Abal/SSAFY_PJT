@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>부동산 거래 플랫폼</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script type="text/javascript"
+    src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=fa616dfbdd589d3c53f274115351ca72&libraries=services"></script>
+  <style>
+    .map-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .overlay-panels {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      max-width: 400px;
+    }
+
+    .search-panel,
+    .filter-panel {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      margin-bottom: 15px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .panel-header {
+      background: #f8f9fa !important;
+      padding: 12px 15px;
+      border-bottom: 1px solid #dee2e6;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #495057 !important;
+    }
+
+    .panel-header h5,
+    .panel-header h6 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: #495057 !important;
+    }
+
+    .search-section,
+    .filter-section {
+      padding: 15px;
+    }
+
+    .btn-close {
+      background: none;
+      border: none;
+      font-size: 18px;
+      color: #6c757d;
+      cursor: pointer;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-close:hover {
+      color: #343a40;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .form-select,
+    .form-control {
+      font-size: 13px;
+      padding: 6px 10px;
+    }
+
+    .btn {
+      font-size: 13px;
+      padding: 6px 12px;
+    }
+
+    .search-results-section {
+      margin-top: 15px;
+    }
+
+    .card-header {
+      padding: 10px 15px;
+      background: #f8f9fa !important;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .card-body {
+      padding: 15px;
+    }
+
+    .view-toggle .btn {
+      font-size: 11px;
+      padding: 4px 8px;
+    }
+
+    .results-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    /* 강제로 스타일 적용 */
+    .panel-header,
+    .card-header {
+      background-color: #f8f9fa !important;
+      color: #495057 !important;
+    }
+
+    .panel-header h5,
+    .panel-header h6,
+    .card-header h6 {
+      color: #495057 !important;
+      font-weight: 600 !important;
+    }
+
+    /* 숨김 표시 스타일 */
+    .hidden-panels-indicator {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 999;
+      display: none;
+    }
+
+    .hidden-panel-item {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      margin-bottom: 10px;
+      padding: 12px 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-left: 4px solid #007bff;
+      min-width: 200px;
+    }
+
+    .hidden-panel-item:hover {
+      background: rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transform: translateX(5px);
+    }
+
+    .hidden-panel-item h6 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: #495057;
+      display: flex;
+      align-items: center;
+    }
+
+    .hidden-panel-item .icon {
+      margin-right: 8px;
+      color: #007bff;
+    }
+
+    /* 패널 숨김 애니메이션 */
+    .panel-hidden {
+      transform: translateX(-100%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+      .overlay-panels {
+        left: 10px;
+        right: 10px;
+        max-width: none;
+      }
+
+      .panel-header h5,
+      .panel-header h6 {
+        font-size: 13px;
+      }
+
+      .search-section,
+      .filter-section {
+        padding: 12px;
+      }
+
+      .hidden-panels-indicator {
+        left: 10px;
+        min-width: 180px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 상단 네비게이션 -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">
+        <i class="fas fa-home me-2"></i>부동산 플랫폼
+      </a>
+
+      <!-- 모바일 메뉴 토글 -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item" id="loginNavItem">
+            <a class="nav-link" href="login.html">
+              <i class="fas fa-sign-in-alt me-1"></i>로그인
+            </a>
+          </li>
+          <li class="nav-item" id="registerNavItem">
+            <a class="nav-link" href="member_register.html">
+              <i class="fas fa-user-plus me-1"></i>회원가입
+            </a>
+          </li>
+          <li class="nav-item" id="logoutNavItem" style="display: none">
+            <a class="nav-link" href="#" onclick="logout()">
+              <i class="fas fa-sign-out-alt me-1"></i>로그아웃
+            </a>
+          </li>
+          <li class="nav-item" id="userDisplay" style="display: none">
+            <div class="dropdown">
+              <button class="nav-link text-light dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                style="background: none; border: none;">
+                <i class="fas fa-user me-1"></i><span id="userDisplayText"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#userInfoModal">
+                    <i class="fas fa-user-edit me-2"></i>내 정보
+                  </a>
+                </li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li>
+                  <a class="dropdown-item text-danger" href="#" onclick="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i>로그아웃
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 지도 컨테이너 -->
+  <div class="map-container">
+    <div id="map"></div>
+
+    <!-- 숨겨진 패널 표시 인디케이터 -->
+    <div class="hidden-panels-indicator" id="hiddenPanelsIndicator">
+      <!-- 숨겨진 패널들이 여기에 동적으로 추가됩니다 -->
+    </div>
+
+    <!-- 실거래가 조회 및 필터 패널들 -->
+    <div class="overlay-panels">
+      <!-- 검색 패널 -->
+      <div class="search-panel" id="searchPanel">
+        <div class="panel-header" style="background-color: #ffffff !important; color: #495057 !important;">
+          <h5 style="color: #495057 !important; font-weight: 600 !important;"><i class="fas fa-search me-2"></i>실거래가 검색
+          </h5>
+          <button class="btn-close" onclick="togglePanel('searchPanel')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="search-section">
+          <form id="searchForm">
+            <div class="row g-2">
+              <div class="col-12">
+                <label for="region" class="form-label">
+                  <i class="fas fa-map-marker-alt me-2"></i>지역
+                </label>
+                <select class="form-select" id="region" name="region" required onchange="updateDistricts()">
+                  <option value="">시/도를 선택하세요</option>
+                </select>
+              </div>
+
+              <div class="col-6">
+                <label for="district" class="form-label">
+                  <i class="fas fa-building me-2"></i>구/군
+                </label>
+                <select class="form-select" id="district" name="district" required onchange="updateDongs()">
+                  <option value="">구/군</option>
+                </select>
+              </div>
+
+              <div class="col-6">
+                <label for="dong" class="form-label">
+                  <i class="fas fa-map-pin me-2"></i>읍면동
+                </label>
+                <select class="form-select" id="dong" name="dong" required>
+                  <option value="">읍면동</option>
+                </select>
+              </div>
+
+              <div class="col-12">
+                <label for="transactionDate" class="form-label">
+                  <i class="fas fa-calendar me-2"></i>거래일자
+                </label>
+                <select class="form-select" id="transactionDate" name="transactionDate" required>
+                  <option value="">거래일자를 선택하세요</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="d-grid gap-2 mt-3">
+              <button type="submit" class="btn btn-primary" onclick="searchRealprice()">
+                <i class="fas fa-search me-2"></i>검색
+              </button>
+              <button type="button" class="btn btn-outline-secondary" onclick="showSearchConditions()">
+                <i class="fas fa-eye me-2"></i>검색 조건 확인
+              </button>
+            </div>
+          </form>
+
+          <!-- 검색 결과 섹션 -->
+          <div class="search-results-section mt-3" id="searchResultsSection" style="display: none;">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center"
+                style="background-color: #f8f9fa !important; color: #495057 !important; border-bottom: 1px solid #dee2e6;">
+                <h6 class="mb-0" style="color: #495057 !important; font-weight: 600 !important;">
+                  <i class="fas fa-list me-2"></i>검색 결과
+                  <span class="badge bg-primary ms-2" id="resultCount">0건</span>
+                </h6>
+                <div class="view-toggle">
+                  <button class="btn btn-outline-secondary btn-sm active" id="listView">
+                    <i class="fas fa-list me-1"></i>목록
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm" id="mapView">
+                    <i class="fas fa-map me-1"></i>지도
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm" onclick="toggleResultsPanel()">
+                    <i class="fas fa-times me-1"></i>닫기
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="results-list" id="resultsList">
+                  <!-- 검색 결과가 여기에 표시됩니다 -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 필터 패널 -->
+      <div class="filter-panel" id="filterPanel">
+        <div class="panel-header" style="background-color: #f8f9fa !important; color: #495057 !important;">
+          <h6 style="color: #495057 !important; font-weight: 600 !important;"><i class="fas fa-filter me-2"></i>필터</h6>
+          <button class="btn-close" onclick="togglePanel('filterPanel')">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="filter-section">
+          <div class="mb-3">
+            <label class="form-label">가격 범위</label>
+            <div class="d-flex gap-2">
+              <input type="number" class="form-control form-control-sm" placeholder="최소" id="minPrice" />
+              <span class="align-self-center">~</span>
+              <input type="number" class="form-control form-control-sm" placeholder="최대" id="maxPrice" />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">면적 범위</label>
+            <div class="d-flex gap-2">
+              <input type="number" class="form-control form-control-sm" placeholder="최소" id="minSize" />
+              <span class="align-self-center">~</span>
+              <input type="number" class="form-control form-control-sm" placeholder="최대" id="maxSize" />
+            </div>
+          </div>
+
+          <button class="btn btn-outline-primary btn-sm w-100" id="applyFilter">
+            <i class="fas fa-check me-1"></i>필터 적용
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Info Modal -->
+  <div class="modal fade" id="userInfoModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="fas fa-user me-2"></i>내 정보
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <!-- 정보 표시 모드 -->
+          <div id="userInfoDisplay" class="user-info">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-user me-2"></i>아이디
+                </label>
+                <p class="form-control-plaintext" id="display-username">사용자</p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-lock me-2"></i>비밀번호
+                </label>
+                <p class="form-control-plaintext" id="display-password">비밀번호</p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-user me-2"></i>이름
+                </label>
+                <p class="form-control-plaintext" id="display-name">사용자</p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-map-marker-alt me-2"></i>주소
+                </label>
+                <p class="form-control-plaintext" id="display-address">주소를 입력해주세요</p>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-bold">
+                  <i class="fas fa-phone me-2"></i>전화번호
+                </label>
+                <p class="form-control-plaintext" id="display-phone">전화번호를 입력해주세요</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 정보 수정 모드 -->
+          <div id="userInfoEdit" class="user-info-edit" style="display: none;">
+            <form id="userEditForm">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="edit-username" class="form-label fw-bold">
+                    <i class="fas fa-user me-2"></i>아이디
+                  </label>
+                  <input type="text" class="form-control" id="edit-username" readonly>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="edit-name" class="form-label fw-bold">
+                    <i class="fas fa-user me-2"></i>이름
+                  </label>
+                  <input type="text" class="form-control" id="edit-name" required>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                  <label for="edit-address" class="form-label fw-bold">
+                    <i class="fas fa-map-marker-alt me-2"></i>주소
+                  </label>
+                  <input type="text" class="form-control" id="edit-address" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="edit-phone" class="form-label fw-bold">
+                    <i class="fas fa-phone me-2"></i>전화번호
+                  </label>
+                  <input type="tel" class="form-control" id="edit-phone" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="edit-password" class="form-label fw-bold">
+                    <i class="fas fa-lock me-2"></i>새 비밀번호
+                  </label>
+                  <div class="input-group">
+                    <input type="password" class="form-control" id="edit-password" placeholder="변경하지 않으려면 비워두세요">
+                    <button class="btn btn-outline-secondary" type="button" id="toggleEditPassword">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div id="displayButtons">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="fas fa-times me-1"></i>닫기
+            </button>
+            <button type="button" class="btn btn-primary" id="editUserBtn">
+              <i class="fas fa-edit me-1"></i>정보 수정
+            </button>
+          </div>
+          <div id="editButtons" style="display: none;">
+            <button type="button" class="btn btn-secondary" id="cancelEditBtn">
+              <i class="fas fa-times me-1"></i>취소
+            </button>
+            <button type="button" class="btn btn-success" id="saveUserBtn">
+              <i class="fas fa-save me-1"></i>저장
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../js/config.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/auth.js"></script>
+
+  <script>
+    // 페이지 로드 완료 후 사용자 정보 업데이트
+    document.addEventListener('DOMContentLoaded', function () {
+      // auth.js가 로드된 후 사용자 정보 업데이트
+      if (typeof auth !== 'undefined' && auth.currentUser) {
+        auth.updateUserInfoModal();
+      }
+    });
+
+    // 패널 토글 함수
+    function togglePanel(panelId) {
+      const panel = document.getElementById(panelId);
+      const indicator = document.getElementById('hiddenPanelsIndicator');
+
+      if (panel.classList.contains('panel-hidden')) {
+        // 패널을 다시 보이게 함
+        panel.classList.remove('panel-hidden');
+        removeHiddenPanelIndicator(panelId);
+      } else {
+        // 패널을 숨김
+        panel.classList.add('panel-hidden');
+        addHiddenPanelIndicator(panelId);
+      }
+
+      // 숨겨진 패널이 있으면 인디케이터 표시
+      updateIndicatorVisibility();
+    }
+
+    // 숨겨진 패널 인디케이터 추가
+    function addHiddenPanelIndicator(panelId) {
+      const indicator = document.getElementById('hiddenPanelsIndicator');
+      const existingItem = indicator.querySelector(`[data-panel="${panelId}"]`);
+
+      if (!existingItem) {
+        const panelInfo = getPanelInfo(panelId);
+        const hiddenItem = document.createElement('div');
+        hiddenItem.className = 'hidden-panel-item';
+        hiddenItem.setAttribute('data-panel', panelId);
+        hiddenItem.onclick = () => togglePanel(panelId);
+
+        hiddenItem.innerHTML = `
+          <h6>
+            <i class="fas ${panelInfo.icon} icon"></i>
+            ${panelInfo.title}
+          </h6>
+        `;
+
+        indicator.appendChild(hiddenItem);
+      }
+    }
+
+    // 숨겨진 패널 인디케이터 제거
+    function removeHiddenPanelIndicator(panelId) {
+      const indicator = document.getElementById('hiddenPanelsIndicator');
+      const hiddenItem = indicator.querySelector(`[data-panel="${panelId}"]`);
+
+      if (hiddenItem) {
+        hiddenItem.remove();
+      }
+    }
+
+    // 패널 정보 가져오기
+    function getPanelInfo(panelId) {
+      const panelInfos = {
+        'searchPanel': {
+          title: '실거래가 검색',
+          icon: 'fa-search'
+        },
+        'filterPanel': {
+          title: '필터',
+          icon: 'fa-filter'
+        }
+      };
+
+      return panelInfos[panelId] || { title: '패널', icon: 'fa-window-maximize' };
+    }
+
+    // 인디케이터 표시/숨김 업데이트
+    function updateIndicatorVisibility() {
+      const indicator = document.getElementById('hiddenPanelsIndicator');
+      const hiddenItems = indicator.querySelectorAll('.hidden-panel-item');
+
+      if (hiddenItems.length > 0) {
+        indicator.style.display = 'block';
+      } else {
+        indicator.style.display = 'none';
+      }
+    }
+
+    // 페이지 로드 시 초기화
+    document.addEventListener('DOMContentLoaded', function () {
+      // 모든 패널이 보이는 상태로 시작
+      updateIndicatorVisibility();
+    });
+  </script>
+</body>
+
+</html>
