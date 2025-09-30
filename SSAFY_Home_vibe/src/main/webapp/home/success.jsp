@@ -1,0 +1,50 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<% String root = request.getContextPath(); %>
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+    <link href="../assets/css/app.css" rel="stylesheet" />
+    <title>HISSAM</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+          <h2 class="my-3 py-3 shadow-sm bg-light text-center">
+            <mark class="sky">글쓰기 결과</mark>
+          </h2>
+        </div>
+        <div class="col-lg-8 col-md-10 col-sm-12">
+          <div class="card text-center bg-light">
+            <h2 class="fw-bold text-primary pt-3">등록 완료!!!</h2>
+            <div class="card-body">
+              <p class="card-text">글작성이 완료되었습니다.</p>
+              <button type="button" id="btn-list" class="btn btn-outline-primary">
+                글목록 페이지 이동...
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      document.querySelector("#btn-list").addEventListener("click", function () {
+        location.href = "<%= root %>/article?action=list";
+      });
+    </script>
+  </body>
+</html>
