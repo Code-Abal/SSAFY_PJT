@@ -29,7 +29,7 @@ public class HomeDaoImpl implements HomeDao {
         ResultSet rs = null;
         try {
             conn = DbUtil.getConnection();
-            String sql = "SELECT dong_code, sido_name, gugun_name, dong_name FROM dongcode";
+            String sql = "SELECT dong_code, sido_name, gugun_name, dong_name FROM dongcodes";
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
             while (rs.next()) {
